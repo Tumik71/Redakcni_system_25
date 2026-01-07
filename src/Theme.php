@@ -1,6 +1,8 @@
 <?php
 namespace Tumik\CMS;
 
+require_once __DIR__ . '/Settings.php';
+
 class Theme {
     public static function injectHead(): void {
         $font = Settings::get('ui_font_family', 'Inter');

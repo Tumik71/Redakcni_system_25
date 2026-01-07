@@ -19,6 +19,14 @@ class Media {
         return '/' . trim($dir, '/');
     }
 
+    public static function thumbDirAbs(): string {
+        return self::uploadAbsPath() . DIRECTORY_SEPARATOR . 'thumbs';
+    }
+
+    public static function thumbWebBase(): string {
+        return rtrim(self::webBase(), '/') . '/thumbs';
+    }
+
     public static function saveUpload(array $file): array {
         if (($file['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_OK) {
             throw new \RuntimeException('upload_error');
@@ -43,6 +51,9 @@ class Media {
             throw new \RuntimeException('move_failed');
         }
         $size = filesize($dest) ?: 0;
+        if (str_starts_with($mime, 'image/')) {
+            self::makeThumb($dest, $mime, 320);
+        }
         $webPath = rtrim(self::webBase(), '/') . '/' . $filename;
         return ['filename'=>$filename,'path'=>$webPath,'mime'=>$mime,'size'=>$size];
     }
@@ -64,5 +75,42 @@ class Media {
         if ($parts[0] === 'public') { array_shift($parts); }
         $abs = realpath(__DIR__ . '/..') . DIRECTORY_SEPARATOR . 'public' . DIRECTORY_SEPARATOR . implode(DIRECTORY_SEPARATOR, $parts);
         return $abs;
+    }
+
+    public static function thumbPathFor(string $filename): string {
+        return rtrim(self::thumbWebBase(), '/') . '/' . $filename;
+    }
+
+    public static function thumbExists(string $filename): bool {
+        $abs = self::thumbDirAbs() . DIRECTORY_SEPARATOR . $filename;
+        return is_file($abs);
+    }
+
+    private static function makeThumb(string $srcAbs, string $mime, int $maxW): void {
+        if (!is_file($srcAbs)) { return; }
+        $info = getimagesize($srcAbs);
+        if (!$info) { return; }
+        [$w,$h] = [$info[0],$info[1]];
+        if ($w <= $maxW) { $destAbs = self::thumbDirAbs() . DIRECTORY_SEPARATOR . basename($srcAbs); @mkdir(dirname($destAbs),0755,true); @copy($srcAbs,$destAbs); return; }
+        $ratio = $h / $w; $tw = $maxW; $th = (int)round($tw * $ratio);
+        $src = match($mime){
+            'image/jpeg' => imagecreatefromjpeg($srcAbs),
+            'image/png' => imagecreatefrompng($srcAbs),
+            'image/gif' => imagecreatefromgif($srcAbs),
+            'image/webp' => function_exists('imagecreatefromwebp') ? imagecreatefromwebp($srcAbs) : null,
+            default => null
+        };
+        if (!$src) { return; }
+        $dst = imagecreatetruecolor($tw,$th);
+        imagecopyresampled($dst,$src,0,0,0,0,$tw,$th,$w,$h);
+        $destAbs = self::thumbDirAbs() . DIRECTORY_SEPARATOR . basename($srcAbs);
+        @mkdir(dirname($destAbs),0755,true);
+        switch ($mime){
+            case 'image/jpeg': imagejpeg($dst,$destAbs,85); break;
+            case 'image/png': imagepng($dst,$destAbs,6); break;
+            case 'image/gif': imagegif($dst,$destAbs); break;
+            case 'image/webp': if (function_exists('imagewebp')) imagewebp($dst,$destAbs,80); break;
+        }
+        imagedestroy($src); imagedestroy($dst);
     }
 }

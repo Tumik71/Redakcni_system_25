@@ -2,8 +2,9 @@
 require_once __DIR__ . '/../config/config.php';
 require_once __DIR__ . '/../src/Database.php';
 require_once __DIR__ . '/../src/Auth.php';
+require_once __DIR__ . '/../src/Media.php';
 
-use Tumik\CMS\Auth; use Tumik\CMS\Database;
+use Tumik\CMS\Auth; use Tumik\CMS\Database; use Tumik\CMS\Media;
 
 if (!Auth::check()) { header('Location: /admin/index.php'); exit; }
 Auth::requireRole('editor');
@@ -32,7 +33,7 @@ $rows = $pdo->query('SELECT id, filename, path, mime, size, created_at FROM medi
           <tr class="border-t">
             <td class="p-3">
               <?php if (str_starts_with($r['mime'],'image/')): ?>
-                <img src="<?= htmlspecialchars($r['path']) ?>" alt="" class="h-12 w-12 object-cover rounded">
+                <img src="<?= htmlspecialchars(Media::thumbExists($r['filename']) ? Media::thumbPathFor($r['filename']) : $r['path']) ?>" alt="" class="h-12 w-12 object-cover rounded">
               <?php else: ?>
                 <a href="<?= htmlspecialchars($r['path']) ?>" class="text-blue-600">Otevřít</a>
               <?php endif; ?>

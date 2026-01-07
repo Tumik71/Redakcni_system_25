@@ -62,12 +62,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <label class="block text-sm mb-1">Obsah (HTML povolen)</label>
         <textarea name="content" class="w-full border rounded p-2 h-64"><?= htmlspecialchars($post['content'] ?? '') ?></textarea>
       </div>
+      <div class="bg-white border rounded p-3">
+        <div class="text-sm mb-2">Vložit médium</div>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+          <?php $m = $pdo->query("SELECT id, path, mime FROM media ORDER BY created_at DESC LIMIT 8")->fetchAll(); foreach ($m as $mi): ?>
+            <div class="border rounded p-2 text-center">
+              <?php if (str_starts_with($mi['mime'],'image/')): ?>
+                <img src="<?= htmlspecialchars($mi['path']) ?>" class="h-16 w-full object-cover rounded mb-2">
+                <button type="button" class="text-blue-600 text-sm" onclick="insertTag('<img src=\'<?= htmlspecialchars($mi['path']) ?>\' alt=\''\'>')">Vložit</button>
+              <?php else: ?>
+                <button type="button" class="text-blue-600 text-sm" onclick="insertTag('<a href=\'<?= htmlspecialchars($mi['path']) ?>\'>Soubor</a>')">Vložit odkaz</button>
+              <?php endif; ?>
+            </div>
+          <?php endforeach; ?>
+        </div>
+      </div>
       <label class="inline-flex items-center space-x-2"><input type="checkbox" name="published" <?= (isset($post['published']) && $post['published']) ? 'checked' : '' ?>><span>Publikovat</span></label>
       <div class="flex gap-2">
         <button class="bg-blue-600 text-white px-3 py-2 rounded">Uložit</button>
         <a href="/admin/posts.php" class="px-3 py-2 rounded border">Zpět</a>
       </div>
     </form>
+  <script>
+    function insertTag(tag){
+      var ta = document.querySelector('textarea[name="content"]');
+      if(!ta) return; var start = ta.selectionStart, end = ta.selectionEnd;
+      var text = ta.value; ta.value = text.substring(0,start) + tag + text.substring(end);
+      ta.focus(); ta.selectionStart = ta.selectionEnd = start + tag.length;
+    }
+  </script>
   </div>
 </body>
 </html>

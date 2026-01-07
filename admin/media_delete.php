@@ -17,6 +17,8 @@ if ($id) {
     if ($row) {
         $fs = Media::fsPathFromWeb($row['path']);
         @unlink($fs);
+        $thumb = Media::thumbDirAbs() . DIRECTORY_SEPARATOR . basename($fs);
+        @unlink($thumb);
         $pdo->prepare('DELETE FROM media WHERE id=?')->execute([$id]);
     }
 }

@@ -81,6 +81,8 @@ Správa médií
 - Podporované typy: obrázky (jpeg/png/gif/webp) a PDF.
 - Proměnná prostředí `UPLOAD_DIR` určuje cílovou složku (výchozí `public/uploads`).
 - Cesty v DB (`media.path`) jsou webové cesty, např. `/uploads/20260107-xxxx.jpg`.
+- Náhledy: pro obrázky se generují miniatury v `uploads/thumbs/` a používají se v administraci.
+- Vložení do editoru: v editaci článku/stránky je panel „Vložit médium“, který vkládá `<img>` nebo odkaz do obsahu.
 
 Správa uživatelů
 - Administrace: `admin/users.php` (list, vytvoření, editace, smazání, reset hesla)

@@ -96,12 +96,20 @@ $curLink = Settings::get('ui_link_color', $curBrand);
         <div class="font-semibold">Barvy</div>
         <div class="grid md:grid-cols-2 gap-3">
           <div>
-            <label class="block text-sm mb-1 text-gray-800 dark:text-slate-200">Brand barva (#hex)</label>
-            <input name="ui_brand_color" class="w-full border border-slate-200 dark:border-slate-600 rounded p-2 bg-white dark:bg-slate-800 text-gray-900 dark:text-slate-100" value="<?= htmlspecialchars($curBrand) ?>" required>
+            <label class="block text-sm mb-1 text-gray-800 dark:text-slate-200">Brand barva</label>
+            <div class="flex items-center gap-3">
+              <?php $brandHex = strpos($curBrand, '#')===0 ? $curBrand : ('#'.ltrim($curBrand,'#')); ?>
+              <input id="brandColorPicker" type="color" class="h-10 w-10 border border-slate-200 dark:border-slate-600 rounded" value="<?= htmlspecialchars($brandHex) ?>">
+              <input id="brandColor" name="ui_brand_color" class="flex-1 border border-slate-200 dark:border-slate-600 rounded p-2 bg-white dark:bg-slate-800 text-gray-900 dark:text-slate-100" value="<?= htmlspecialchars($curBrand) ?>" required>
+            </div>
           </div>
           <div>
-            <label class="block text-sm mb-1 text-gray-800 dark:text-slate-200">Barva odkazů (#hex)</label>
-            <input name="ui_link_color" class="w-full border border-slate-200 dark:border-slate-600 rounded p-2 bg-white dark:bg-slate-800 text-gray-900 dark:text-slate-100" value="<?= htmlspecialchars($curLink) ?>" required>
+            <label class="block text-sm mb-1 text-gray-800 dark:text-slate-200">Barva odkazů</label>
+            <div class="flex items-center gap-3">
+              <?php $linkHex = strpos($curLink, '#')===0 ? $curLink : ('#'.ltrim($curLink,'#')); ?>
+              <input id="linkColorPicker" type="color" class="h-10 w-10 border border-slate-200 dark:border-slate-600 rounded" value="<?= htmlspecialchars($linkHex) ?>">
+              <input id="linkColor" name="ui_link_color" class="flex-1 border border-slate-200 dark:border-slate-600 rounded p-2 bg-white dark:bg-slate-800 text-gray-900 dark:text-slate-100" value="<?= htmlspecialchars($curLink) ?>" required>
+            </div>
           </div>
         </div>
       </div>
@@ -110,6 +118,21 @@ $curLink = Settings::get('ui_link_color', $curBrand);
         <a href="/admin/dashboard.php" class="px-3 py-2 rounded border">Zpět</a>
       </div>
     </form>
+    <script>
+      const brandPicker = document.getElementById('brandColorPicker');
+      const brandInput = document.getElementById('brandColor');
+      const linkPicker = document.getElementById('linkColorPicker');
+      const linkInput = document.getElementById('linkColor');
+      function normHex(v){ if(!v) return ''; v = v.trim(); if(v[0] !== '#') v = '#'+v; return v; }
+      if(brandPicker && brandInput){
+        brandPicker.addEventListener('input', ()=>{ brandInput.value = brandPicker.value; });
+        brandInput.addEventListener('input', ()=>{ brandPicker.value = normHex(brandInput.value); });
+      }
+      if(linkPicker && linkInput){
+        linkPicker.addEventListener('input', ()=>{ linkInput.value = linkPicker.value; });
+        linkInput.addEventListener('input', ()=>{ linkPicker.value = normHex(linkInput.value); });
+      }
+    </script>
   </div>
 </body>
 </html>

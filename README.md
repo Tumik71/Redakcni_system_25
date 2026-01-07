@@ -72,6 +72,10 @@ Instalátor
 - Spusťte `https://tumik.cz/install/` a projděte kroky: kontrola prostředí → zadání DB a URL → nastavení admina → vytvoření `.env`, schématu a migrací.
 - Pokud `.env` chybí nebo DB není dostupná, systém automaticky přesměruje do instalátoru.
 
+DocumentRoot vs public/
+- Pokud server směřuje na kořen projektu (`/web`), je v kořeni `.htaccess` a `index.php` přesměrovávající do `public/` (kromě `admin/`).
+- Preferované řešení je nastavit DocumentRoot na `/web/public`. Pokud to nelze, ponechte kořenový `.htaccess`/`index.php`.
+
 Uploady a .htaccess
 - Instalátor vytvoří složku pro uploady (`public/uploads`) a otestuje zápis.
 - Pokud chybí `public/.htaccess`, instalátor ho vygeneruje s pravidly pro přesměrování na `index.php` a blokaci přístupu do `config/` a `src/`.

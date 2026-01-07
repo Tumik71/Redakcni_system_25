@@ -76,6 +76,12 @@ Uploady a .htaccess
 - Instalátor vytvoří složku pro uploady (`public/uploads`) a otestuje zápis.
 - Pokud chybí `public/.htaccess`, instalátor ho vygeneruje s pravidly pro přesměrování na `index.php` a blokaci přístupu do `config/` a `src/`.
 
+Správa médií
+- Administrace: `admin/media.php` (seznam, náhled, mazání) a `admin/media_upload.php` (nahrání souboru).
+- Podporované typy: obrázky (jpeg/png/gif/webp) a PDF.
+- Proměnná prostředí `UPLOAD_DIR` určuje cílovou složku (výchozí `public/uploads`).
+- Cesty v DB (`media.path`) jsou webové cesty, např. `/uploads/20260107-xxxx.jpg`.
+
 Správa uživatelů
 - Administrace: `admin/users.php` (list, vytvoření, editace, smazání, reset hesla)
 - Role vyžadované: minimálně `admin` pro správu uživatelů

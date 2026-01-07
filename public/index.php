@@ -21,18 +21,21 @@ $stats = [
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Tumik CMS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
-  <script>tailwind.config={theme:{extend:{colors:{brand:{DEFAULT:'#0ea5e9',dark:'#0369a1'},ink:'#0f172a'}}}}</script>
-  <script>(function(){var t=localStorage.getItem('theme');var d=t?t==='dark':window.matchMedia('(prefers-color-scheme: dark)').matches;if(d)document.documentElement.classList.add('dark');})();</script>
+  <script>tailwind.config={theme:{extend:{colors:{brand:{DEFAULT:'#0ea5e9',dark:'#0369a1'},ink:'#0f172a'},fontFamily:{sans:['Inter','ui-sans-serif','system-ui']}}}}</script>
+  <script>(function(){var t=localStorage.getItem('theme');var d=t==='dark';document.documentElement.classList.toggle('dark', d);})();</script>
 </head>
-<body class="bg-white dark:bg-slate-900 text-ink dark:text-slate-100">
+<body class="bg-white dark:bg-slate-900 text-ink dark:text-slate-100 font-sans font-light">
   <nav class="fixed top-0 inset-x-0 z-30 backdrop-blur bg-white/70 dark:bg-slate-900/70 border-b border-slate-200 dark:border-slate-700">
     <div class="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
       <a href="/" class="font-semibold tracking-tight">Tumik CMS</a>
       <div class="flex items-center gap-3">
         <button id="themeToggle" class="h-8 w-8 rounded-full border border-slate-200 dark:border-slate-700 flex items-center justify-center text-gray-700 dark:text-slate-300">
-          <svg class="block dark:hidden" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
-          <svg class="hidden dark:block" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+          <svg id="iconSun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+          <svg id="iconMoon" class="hidden" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
         </button>
         <a href="/register.php" class="text-sm text-gray-700 dark:text-slate-300 hover:text-brand">Registrace</a>
         <a href="/admin/" class="px-3 py-1.5 rounded bg-brand text-white text-sm">Administrace</a>
@@ -44,7 +47,7 @@ $stats = [
     <div class="max-w-6xl mx-auto px-6 grid md:grid-cols-2 gap-8 items-center">
       <div class="space-y-4">
         <h1 class="text-4xl md:text-5xl font-bold">Moderní, rychlé a jednoduché CMS</h1>
-        <p class="text-lg text-gray-700 dark:text-slate-300">Instalátor, administrace, API, média a CI/CD. Vše připraveno pro snadné nasazení na ISPConfig.</p>
+        <p class="text-lg text-gray-600 dark:text-slate-300">Instalátor, administrace, API, média a CI/CD. Vše připraveno pro snadné nasazení na ISPConfig.</p>
         <div class="flex gap-3">
           <a href="/admin/" class="px-4 py-2 rounded bg-brand hover:bg-brand/dark text-white">Přejít do administrace</a>
           <a href="/api/posts.php" class="px-4 py-2 rounded border">Zobrazit API</a>
@@ -105,6 +108,10 @@ $stats = [
       </div>
     </div>
   </footer>
-  <script>var b=document.getElementById('themeToggle');if(b){b.addEventListener('click',function(){var d=document.documentElement.classList.toggle('dark');localStorage.setItem('theme',d?'dark':'light');});}</script>
+  <script>
+    function syncIcons(){var d=document.documentElement.classList.contains('dark');var sun=document.getElementById('iconSun');var moon=document.getElementById('iconMoon');if(sun&&moon){sun.classList.toggle('hidden', d);moon.classList.toggle('hidden', !d);}}
+    syncIcons();
+    var b=document.getElementById('themeToggle');if(b){b.addEventListener('click',function(){var d=!document.documentElement.classList.contains('dark');document.documentElement.classList.toggle('dark', d);localStorage.setItem('theme',d?'dark':'light');syncIcons();});}
+  </script>
 </body>
 </html>

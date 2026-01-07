@@ -52,6 +52,11 @@ GitHub
    - `git commit -m "Popis změny"`
    - `git push`
 
+Automatické odesílání na GitHub
+- Spuštění na pozadí (při změnách se provede commit a push):
+  - `powershell -ExecutionPolicy Bypass -File ./scripts/auto-push.ps1`
+- Debounce je 5s; ignoruje `.git`, `node_modules`, `vendor`, `.env` je ignorován díky `.gitignore`.
+
 Správa uživatelů
 - Administrace: `admin/users.php` (list, vytvoření, editace, smazání, reset hesla)
 - Role vyžadované: minimálně `admin` pro správu uživatelů

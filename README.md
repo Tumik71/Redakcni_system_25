@@ -72,6 +72,10 @@ Instalátor
 - Spusťte `https://tumik.cz/install/` a projděte kroky: kontrola prostředí → zadání DB a URL → nastavení admina → vytvoření `.env`, schématu a migrací.
 - Pokud `.env` chybí nebo DB není dostupná, systém automaticky přesměruje do instalátoru.
 
+Uploady a .htaccess
+- Instalátor vytvoří složku pro uploady (`public/uploads`) a otestuje zápis.
+- Pokud chybí `public/.htaccess`, instalátor ho vygeneruje s pravidly pro přesměrování na `index.php` a blokaci přístupu do `config/` a `src/`.
+
 Správa uživatelů
 - Administrace: `admin/users.php` (list, vytvoření, editace, smazání, reset hesla)
 - Role vyžadované: minimálně `admin` pro správu uživatelů

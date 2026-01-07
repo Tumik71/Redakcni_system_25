@@ -23,6 +23,23 @@ function runSqlFile($path, $pdo){
     }
 }
 
+function ensureUploads($relative){
+    $base = realpath(__DIR__ . '/../');
+    $path = $base . DIRECTORY_SEPARATOR . str_replace(['\\'], DIRECTORY_SEPARATOR, $relative);
+    if (!is_dir($path)) { @mkdir($path, 0755, true); }
+    $testFile = $path . DIRECTORY_SEPARATOR . '.write_test';
+    $ok = @file_put_contents($testFile, 'ok') !== false;
+    if ($ok) { @unlink($testFile); }
+    return $ok;
+}
+
+function writeHtaccess($publicDir){
+    $file = rtrim($publicDir, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . '.htaccess';
+    if (is_file($file)) { return true; }
+    $content = "<IfModule mod_rewrite.c>\nRewriteEngine On\nRewriteCond %{REQUEST_FILENAME} !-f\nRewriteCond %{REQUEST_FILENAME} !-d\nRewriteRule ^ index.php [L]\n</IfModule>\n\nRedirectMatch 403 ^/(config|src)/\n";
+    return file_put_contents($file, $content) !== false;
+}
+
 if ($step === 4 && $_SERVER['REQUEST_METHOD'] === 'POST'){
     $data['APP_URL'] = trim($_POST['app_url'] ?? '');
     $data['DB_HOST'] = trim($_POST['db_host'] ?? 'localhost');
@@ -32,6 +49,7 @@ if ($step === 4 && $_SERVER['REQUEST_METHOD'] === 'POST'){
     $data['DB_PASS'] = trim($_POST['db_pass'] ?? '');
     $data['MAIL_FROM'] = trim($_POST['mail_from'] ?? 'noreply@tumik.cz');
     $data['MAIL_FROM_NAME'] = trim($_POST['mail_from_name'] ?? 'Tumik CMS');
+    $data['UPLOAD_DIR'] = trim($_POST['upload_dir'] ?? 'public/uploads');
     $_SESSION['install'] = $data;
     header('Location: ?step=5'); exit;
 }
@@ -40,6 +58,7 @@ if ($step === 6 && $_SERVER['REQUEST_METHOD'] === 'POST'){
     $adminUser = trim($_POST['admin_user'] ?? 'admin');
     $adminPass = trim($_POST['admin_pass'] ?? '');
     $adminEmail = trim($_POST['admin_email'] ?? '');
+    $demo = isset($_POST['demo']) ? 1 : 0;
     $pairs = [
         'APP_ENV' => 'production',
         'APP_URL' => $data['APP_URL'] ?? '',
@@ -55,6 +74,7 @@ if ($step === 6 && $_SERVER['REQUEST_METHOD'] === 'POST'){
         'ADMIN_DEFAULT_PASS' => $adminPass ?: 'change_me_123',
         'MAIL_FROM' => $data['MAIL_FROM'] ?? 'noreply@tumik.cz',
         'MAIL_FROM_NAME' => $data['MAIL_FROM_NAME'] ?? 'Tumik CMS',
+        'UPLOAD_DIR' => $data['UPLOAD_DIR'] ?? 'public/uploads',
     ];
     writeEnv($pairs);
     Env::load(__DIR__ . '/../.env');
@@ -66,6 +86,11 @@ if ($step === 6 && $_SERVER['REQUEST_METHOD'] === 'POST'){
     if (is_file(__DIR__.'/../db/migrations/002_user_activations.sql')) {
         runSqlFile(__DIR__.'/../db/migrations/002_user_activations.sql', $pdo);
     }
+    if ($demo && is_file(__DIR__.'/../db/seed.sql')) {
+        runSqlFile(__DIR__.'/../db/seed.sql', $pdo);
+    }
+    ensureUploads($pairs['UPLOAD_DIR']);
+    writeHtaccess(__DIR__.'/../public');
     $hash = password_hash($pairs['ADMIN_DEFAULT_PASS'], PASSWORD_DEFAULT);
     $stmt = $pdo->prepare('INSERT INTO users (username,email,role,active,password_hash) VALUES (?,?,?,?,?)');
     $stmt->execute([$pairs['ADMIN_DEFAULT_USER'],$adminEmail,'admin',1,$hash]);
@@ -144,6 +169,11 @@ if ($step === 6 && $_SERVER['REQUEST_METHOD'] === 'POST'){
             <input name="mail_from_name" class="w-full border rounded p-2" value="<?= h($data['MAIL_FROM_NAME'] ?? 'Tumik CMS') ?>" required>
           </div>
         </div>
+        <div>
+          <label class="block text-sm mb-1">Složka pro upload médií</label>
+          <input name="upload_dir" class="w-full border rounded p-2" value="<?= h($data['UPLOAD_DIR'] ?? 'public/uploads') ?>" required>
+          <div class="text-xs text-gray-500 mt-1">Relativně k kořeni projektu. Bude vytvořena a otestována pro zápis.</div>
+        </div>
         <button class="bg-blue-600 text-white px-3 py-2 rounded">Uložit a pokračovat</button>
       </form>
     <?php elseif ($step === 5): ?>
@@ -160,6 +190,7 @@ if ($step === 6 && $_SERVER['REQUEST_METHOD'] === 'POST'){
           <label class="block text-sm mb-1">Admin heslo</label>
           <input type="password" name="admin_pass" class="w-full border rounded p-2" required>
         </div>
+        <label class="inline-flex items-center space-x-2"><input type="checkbox" name="demo"><span>Přidat demo obsah (ukázkový admin a články)</span></label>
         <button class="bg-blue-600 text-white px-3 py-2 rounded">Instalovat</button>
       </form>
     <?php elseif ($step === 7): ?>

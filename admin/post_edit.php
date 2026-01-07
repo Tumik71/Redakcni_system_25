@@ -43,30 +43,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
   <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Upravit článek</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
+  <script>tailwind.config={theme:{extend:{colors:{brand:{DEFAULT:'#0ea5e9',dark:'#0369a1'}},fontFamily:{sans:['Inter','ui-sans-serif','system-ui']}}}}</script>
+  <script>(function(){var t=localStorage.getItem('theme');var d=t==='dark';document.documentElement.classList.toggle('dark', d);})();</script>
 </head>
-<body class="bg-gray-50">
-  <div class="max-w-3xl mx-auto p-6">
+<body class="bg-white dark:bg-slate-900 font-sans font-light">
+  <div class="max-w-3xl mx-auto p-6 pt-12">
     <h1 class="text-xl font-semibold mb-4"><?= $id ? 'Upravit článek' : 'Nový článek' ?></h1>
     <?php if ($error): ?><div class="mb-3 p-3 bg-red-50 text-red-700 rounded"><?= htmlspecialchars($error) ?></div><?php endif; ?>
-    <form method="post" class="space-y-4">
+    <form method="post" class="space-y-4 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-4 rounded">
       <div>
-        <label class="block text-sm mb-1">Název</label>
-        <input name="title" class="w-full border rounded p-2" value="<?= htmlspecialchars($post['title'] ?? '') ?>" required>
+        <label class="block text-sm mb-1 text-gray-800 dark:text-slate-200">Název</label>
+        <input name="title" class="w-full border border-slate-200 dark:border-slate-600 rounded p-2 bg-white dark:bg-slate-800 text-gray-900 dark:text-slate-100" value="<?= htmlspecialchars($post['title'] ?? '') ?>" required>
       </div>
       <div>
-        <label class="block text-sm mb-1">Slug</label>
-        <input name="slug" class="w-full border rounded p-2" value="<?= htmlspecialchars($post['slug'] ?? '') ?>">
+        <label class="block text-sm mb-1 text-gray-800 dark:text-slate-200">Slug</label>
+        <input name="slug" class="w-full border border-slate-200 dark:border-slate-600 rounded p-2 bg-white dark:bg-slate-800 text-gray-900 dark:text-slate-100" value="<?= htmlspecialchars($post['slug'] ?? '') ?>">
       </div>
       <div>
-        <label class="block text-sm mb-1">Obsah (HTML povolen)</label>
-        <textarea name="content" class="w-full border rounded p-2 h-64"><?= htmlspecialchars($post['content'] ?? '') ?></textarea>
+        <label class="block text-sm mb-1 text-gray-800 dark:text-slate-200">Obsah (HTML povolen)</label>
+        <textarea name="content" class="w-full border border-slate-200 dark:border-slate-600 rounded p-2 h-64 bg-white dark:bg-slate-800 text-gray-900 dark:text-slate-100"><?= htmlspecialchars($post['content'] ?? '') ?></textarea>
       </div>
-      <div class="bg-white border rounded p-3">
+      <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded p-3">
         <div class="text-sm mb-2">Vložit médium</div>
         <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
           <?php $m = $pdo->query("SELECT id, path, mime FROM media ORDER BY created_at DESC LIMIT 8")->fetchAll(); foreach ($m as $mi): ?>
-            <div class="border rounded p-2 text-center">
+            <div class="border border-slate-200 dark:border-slate-700 rounded p-2 text-center">
               <?php if (str_starts_with($mi['mime'],'image/')): ?>
                 <img src="<?= htmlspecialchars($mi['path']) ?>" class="h-16 w-full object-cover rounded mb-2">
                 <button type="button" class="text-blue-600 text-sm" onclick="insertTag('<img src=\'<?= htmlspecialchars($mi['path']) ?>\' alt=\''\'>')">Vložit</button>
@@ -79,7 +84,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       </div>
       <label class="inline-flex items-center space-x-2"><input type="checkbox" name="published" <?= (isset($post['published']) && $post['published']) ? 'checked' : '' ?>><span>Publikovat</span></label>
       <div class="flex gap-2">
-        <button class="bg-blue-600 text-white px-3 py-2 rounded">Uložit</button>
+        <button class="bg-brand text-white px-3 py-2 rounded">Uložit</button>
         <a href="/admin/posts.php" class="px-3 py-2 rounded border">Zpět</a>
       </div>
     </form>

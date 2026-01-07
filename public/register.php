@@ -36,27 +36,45 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Registrace</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script>tailwind.config={theme:{extend:{colors:{brand:{DEFAULT:'#0ea5e9',dark:'#0369a1'}}}}}</script>
+  <script>(function(){var t=localStorage.getItem('theme');var d=t?t==='dark':window.matchMedia('(prefers-color-scheme: dark)').matches;if(d)document.documentElement.classList.add('dark');})();</script>
 </head>
-<body class="bg-gray-50">
-  <div class="max-w-md mx-auto p-6">
-    <h1 class="text-xl font-semibold mb-4">Registrace</h1>
+<body class="bg-white dark:bg-slate-900">
+  <nav class="fixed top-0 inset-x-0 z-30 backdrop-blur bg-white/70 dark:bg-slate-900/70 border-b border-slate-200 dark:border-slate-700">
+    <div class="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
+      <a href="/" class="font-semibold tracking-tight">Tumik CMS</a>
+      <div class="flex items-center gap-3">
+        <a href="/" class="text-sm text-gray-700 dark:text-slate-300 hover:text-brand">Domů</a>
+        <button id="themeToggle" class="h-8 w-8 rounded-full border border-slate-200 dark:border-slate-700 flex items-center justify-center text-gray-700 dark:text-slate-300">
+          <svg class="block dark:hidden" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+          <svg class="hidden dark:block" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+  <div class="max-w-md mx-auto p-6 pt-24">
+    <h1 class="text-2xl font-semibold mb-4">Registrace</h1>
     <?php if ($error): ?><div class="mb-3 p-3 bg-red-50 text-red-700 rounded"><?= htmlspecialchars($error) ?></div><?php endif; ?>
     <?php if ($ok): ?><div class="mb-3 p-3 bg-green-50 text-green-700 rounded"><?= htmlspecialchars($ok) ?></div><?php endif; ?>
-    <form method="post" class="space-y-4">
+    <form method="post" class="space-y-4 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-4 rounded">
       <div>
         <label class="block text-sm mb-1">Uživatelské jméno</label>
-        <input name="username" class="w-full border rounded p-2" required>
+        <input name="username" class="w-full border border-slate-200 dark:border-slate-700 rounded p-2 bg-white dark:bg-slate-900" required>
       </div>
       <div>
         <label class="block text-sm mb-1">Email</label>
-        <input type="email" name="email" class="w-full border rounded p-2" required>
+        <input type="email" name="email" class="w-full border border-slate-200 dark:border-slate-700 rounded p-2 bg-white dark:bg-slate-900" required>
       </div>
       <div>
         <label class="block text-sm mb-1">Heslo</label>
-        <input type="password" name="password" class="w-full border rounded p-2" required>
+        <input type="password" name="password" class="w-full border border-slate-200 dark:border-slate-700 rounded p-2 bg-white dark:bg-slate-900" required>
       </div>
-      <button class="bg-blue-600 text-white px-3 py-2 rounded">Registrovat</button>
+      <div class="flex gap-3">
+        <button class="bg-brand hover:bg-brand/dark text-white px-3 py-2 rounded">Registrovat</button>
+        <a href="/admin/" class="px-3 py-2 rounded border">Přihlásit se</a>
+      </div>
     </form>
   </div>
+  <script>var b=document.getElementById('themeToggle');if(b){b.addEventListener('click',function(){var d=document.documentElement.classList.toggle('dark');localStorage.setItem('theme',d?'dark':'light');});}</script>
 </body>
 </html>

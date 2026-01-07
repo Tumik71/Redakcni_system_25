@@ -3,6 +3,7 @@ require_once __DIR__ . '/../config/config.php';
 require_once __DIR__ . '/../src/Database.php';
 require_once __DIR__ . '/../src/Auth.php';
 require_once __DIR__ . '/../src/Util.php';
+require_once __DIR__ . '/../src/Theme.php';
 
 use Tumik\CMS\Auth; use Tumik\CMS\Database; use Tumik\CMS\Util;
 
@@ -47,7 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
   <script>tailwind.config={theme:{extend:{colors:{brand:{DEFAULT:'#0ea5e9',dark:'#0369a1'}},fontFamily:{sans:['Inter','ui-sans-serif','system-ui']}}}}</script>
-  <script>(function(){var t=localStorage.getItem('theme');var d=t==='dark';document.documentElement.classList.toggle('dark', d);})();</script>
+  <?php \Tumik\CMS\Theme::injectHead(); ?>
 </head>
 <body class="bg-white dark:bg-slate-900 font-sans font-light">
   <div class="max-w-3xl mx-auto p-6 pt-12">

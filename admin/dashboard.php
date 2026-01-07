@@ -2,6 +2,7 @@
 require_once __DIR__ . '/../config/config.php';
 require_once __DIR__ . '/../src/Database.php';
 require_once __DIR__ . '/../src/Auth.php';
+require_once __DIR__ . '/../src/Theme.php';
 
 use Tumik\CMS\Auth; use Tumik\CMS\Database;
 
@@ -29,7 +30,7 @@ $counts = [
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
   <script>tailwind.config={theme:{extend:{colors:{brand:{DEFAULT:'#0ea5e9',dark:'#0369a1'}},fontFamily:{sans:['Inter','ui-sans-serif','system-ui']}}}}</script>
-  <script>(function(){var t=localStorage.getItem('theme');var d=t==='dark';document.documentElement.classList.toggle('dark', d);})();</script>
+  <?php \Tumik\CMS\Theme::injectHead(); ?>
 </head>
 <body class="bg-white dark:bg-slate-900 text-gray-900 dark:text-slate-100 font-sans font-light">
   <nav class="fixed top-0 inset-x-0 z-30 backdrop-blur bg-white/70 dark:bg-slate-900/70 border-b border-slate-200 dark:border-slate-700">
@@ -42,6 +43,7 @@ $counts = [
           <svg id="iconMoon" class="hidden" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
         </button>
         <form action="/admin/logout.php" method="post"><button class="text-sm text-brand">Odhlásit</button></form>
+        <a href="/admin/theme_settings.php" class="text-sm text-gray-700 dark:text-slate-300 hover:text-brand">Nastavení</a>
       </div>
     </div>
   </nav>

@@ -4,10 +4,8 @@ CREATE TABLE IF NOT EXISTS settings (
   `value` TEXT NOT NULL
 );
 
-INSERT INTO settings(`key`,`value`) VALUES
-('media_allowed_mime','image/jpeg,image/png,image/gif,image/webp,application/pdf')
-ON CONFLICT DO NOTHING;
+INSERT IGNORE INTO settings(`key`,`value`) VALUES
+('media_allowed_mime','image/jpeg,image/png,image/gif,image/webp,application/pdf');
 
-INSERT INTO settings(`key`,`value`) VALUES
-('media_max_upload_mb','10')
-ON CONFLICT DO NOTHING;
+INSERT IGNORE INTO settings(`key`,`value`) VALUES
+('media_max_upload_mb','10');

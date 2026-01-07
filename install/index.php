@@ -8,6 +8,7 @@ use Tumik\CMS\Env; use Tumik\CMS\Database; use Tumik\CMS\Installer;
 
 $step = isset($_GET['step']) ? (int)$_GET['step'] : 1;
 $data = $_SESSION['install'] ?? [];
+$errorMsg = null;
 
 function h($s){ return htmlspecialchars($s, ENT_QUOTES, 'UTF-8'); }
 function phpExt($ext){ return extension_loaded($ext); }
@@ -76,29 +77,34 @@ if ($step === 6 && $_SERVER['REQUEST_METHOD'] === 'POST'){
         'MAIL_FROM_NAME' => $data['MAIL_FROM_NAME'] ?? 'Tumik CMS',
         'UPLOAD_DIR' => $data['UPLOAD_DIR'] ?? 'public/uploads',
     ];
-    writeEnv($pairs);
-    Env::load(__DIR__ . '/../.env');
-    $pdo = Database::conn();
-    runSqlFile(__DIR__.'/../db/schema.sql', $pdo);
-    if (is_file(__DIR__.'/../db/migrations/001_add_email_and_password_resets.sql')) {
-        runSqlFile(__DIR__.'/../db/migrations/001_add_email_and_password_resets.sql', $pdo);
+    try {
+        writeEnv($pairs);
+        Env::load(__DIR__ . '/../.env');
+        $pdo = Database::conn();
+        runSqlFile(__DIR__.'/../db/schema.sql', $pdo);
+        if (is_file(__DIR__.'/../db/migrations/001_add_email_and_password_resets.sql')) {
+            runSqlFile(__DIR__.'/../db/migrations/001_add_email_and_password_resets.sql', $pdo);
+        }
+        if (is_file(__DIR__.'/../db/migrations/002_user_activations.sql')) {
+            runSqlFile(__DIR__.'/../db/migrations/002_user_activations.sql', $pdo);
+        }
+        if (is_file(__DIR__.'/../db/migrations/003_settings.sql')) {
+            runSqlFile(__DIR__.'/../db/migrations/003_settings.sql', $pdo);
+        }
+        if ($demo && is_file(__DIR__.'/../db/seed.sql')) {
+            runSqlFile(__DIR__.'/../db/seed.sql', $pdo);
+        }
+        ensureUploads($pairs['UPLOAD_DIR']);
+        writeHtaccess(__DIR__.'/../public');
+        $hash = password_hash($pairs['ADMIN_DEFAULT_PASS'], PASSWORD_DEFAULT);
+        $stmt = $pdo->prepare('INSERT INTO users (username,email,role,active,password_hash) VALUES (?,?,?,?,?)');
+        $stmt->execute([$pairs['ADMIN_DEFAULT_USER'],$adminEmail,'admin',1,$hash]);
+        $_SESSION['install_done'] = true;
+        header('Location: ?step=7'); exit;
+    } catch (\Throwable $e) {
+        $errorMsg = 'Instalace se nezdařila: ' . $e->getMessage();
+        $step = 6;
     }
-    if (is_file(__DIR__.'/../db/migrations/002_user_activations.sql')) {
-        runSqlFile(__DIR__.'/../db/migrations/002_user_activations.sql', $pdo);
-    }
-    if (is_file(__DIR__.'/../db/migrations/003_settings.sql')) {
-        runSqlFile(__DIR__.'/../db/migrations/003_settings.sql', $pdo);
-    }
-    if ($demo && is_file(__DIR__.'/../db/seed.sql')) {
-        runSqlFile(__DIR__.'/../db/seed.sql', $pdo);
-    }
-    ensureUploads($pairs['UPLOAD_DIR']);
-    writeHtaccess(__DIR__.'/../public');
-    $hash = password_hash($pairs['ADMIN_DEFAULT_PASS'], PASSWORD_DEFAULT);
-    $stmt = $pdo->prepare('INSERT INTO users (username,email,role,active,password_hash) VALUES (?,?,?,?,?)');
-    $stmt->execute([$pairs['ADMIN_DEFAULT_USER'],$adminEmail,'admin',1,$hash]);
-    $_SESSION['install_done'] = true;
-    header('Location: ?step=7'); exit;
 }
 
 ?><!doctype html>
@@ -196,6 +202,9 @@ if ($step === 6 && $_SERVER['REQUEST_METHOD'] === 'POST'){
         <label class="inline-flex items-center space-x-2"><input type="checkbox" name="demo"><span>Přidat demo obsah (ukázkový admin a články)</span></label>
         <button class="bg-blue-600 text-white px-3 py-2 rounded">Instalovat</button>
       </form>
+    <?php elseif ($step === 6): ?>
+      <?php if ($errorMsg): ?><div class="mb-3 p-3 bg-red-50 text-red-700 rounded"><?= htmlspecialchars($errorMsg) ?></div><?php endif; ?>
+      <a href="?step=5" class="bg-blue-600 text-white px-3 py-2 rounded">Zpět na nastavení admina</a>
     <?php elseif ($step === 7): ?>
       <div class="p-3 bg-green-50 text-green-700 rounded">Instalace dokončena.</div>
       <div class="mt-3 space-x-3">

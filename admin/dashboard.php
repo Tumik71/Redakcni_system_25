@@ -41,10 +41,10 @@ $counts = [
         <div class="text-sm text-gray-500">Stránky</div>
         <div class="text-2xl font-bold"><?= $counts['pages'] ?></div>
       </a>
-      <div class="bg-white p-4 rounded border">
+      <a href="/admin/users.php" class="bg-white p-4 rounded border block">
         <div class="text-sm text-gray-500">Uživatelé</div>
         <div class="text-2xl font-bold"><?= $counts['users'] ?></div>
-      </div>
+      </a>
     </div>
   </main>
 </body>

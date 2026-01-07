@@ -51,3 +51,15 @@ GitHub
    - `git add .`
    - `git commit -m "Popis změny"`
    - `git push`
+
+Správa uživatelů
+- Administrace: `admin/users.php` (list, vytvoření, editace, smazání, reset hesla)
+- Role vyžadované: minimálně `admin` pro správu uživatelů
+- Reset hesla (admin): `admin/user_reset.php?id=<id>`
+- Reset hesla (veřejně):
+  - `GET /forgot.php` — zadání uživatelského jména, vygeneruje se odkaz
+  - `GET/POST /reset.php?token=...` — zadání nového hesla
+
+Migrace DB
+- Přidejte email a tabulku resetů:
+  - přes phpMyAdmin nebo cli: importujte `db/migrations/001_add_email_and_password_resets.sql`

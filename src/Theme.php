@@ -5,9 +5,20 @@ require_once __DIR__ . '/Settings.php';
 
 class Theme {
     public static function injectHead(): void {
-        $font = Settings::get('ui_font_family', 'Inter');
-        $size = Settings::get('ui_font_size', '16px');
-        $weight = Settings::get('ui_font_weight', '300');
-        echo "\n<style>\n:root{--ui-font-family:".htmlspecialchars($font,ENT_QUOTES).", ui-sans-serif, system-ui;--ui-font-size:".htmlspecialchars($size,ENT_QUOTES).";--ui-font-weight:".htmlspecialchars($weight,ENT_QUOTES).";}\nhtml:not(.dark) body{color:#0f172a;}\nhtml.dark body{color:#e5e7eb;}\nbody{font-family:var(--ui-font-family);font-size:var(--ui-font-size);font-weight:var(--ui-font-weight);}\ninput,textarea,select{color:inherit;}\nhtml.dark input,html.dark textarea,html.dark select{background-color:#0f172a;color:#e5e7eb;}\n</style>\n<script>(function(){var t=localStorage.getItem('theme');document.documentElement.classList.toggle('dark', t==='dark');})();</script>\n";
+        $bodyFont = Settings::get('ui_font_family', 'Inter');
+        $bodySize = Settings::get('ui_font_size', '16px');
+        $bodyWeight = Settings::get('ui_font_weight', '300');
+
+        $headingFont = Settings::get('ui_heading_font_family', $bodyFont);
+        $headingWeight = Settings::get('ui_heading_weight', '600');
+
+        $brand = Settings::get('ui_brand_color', '#0ea5e9');
+        $link = Settings::get('ui_link_color', $brand);
+        $textLight = Settings::get('ui_text_light', '#0f172a');
+        $textDark = Settings::get('ui_text_dark', '#e5e7eb');
+
+        $css = "\n<style>\n:root{--ui-body-font:".htmlspecialchars($bodyFont,ENT_QUOTES).", ui-sans-serif, system-ui;--ui-body-size:".htmlspecialchars($bodySize,ENT_QUOTES).";--ui-body-weight:".htmlspecialchars($bodyWeight,ENT_QUOTES).";--ui-heading-font:".htmlspecialchars($headingFont,ENT_QUOTES).", ui-sans-serif, system-ui;--ui-heading-weight:".htmlspecialchars($headingWeight,ENT_QUOTES).";--ui-brand-color:".htmlspecialchars($brand,ENT_QUOTES).";--ui-link-color:".htmlspecialchars($link,ENT_QUOTES).";--ui-text-light:".htmlspecialchars($textLight,ENT_QUOTES).";--ui-text-dark:".htmlspecialchars($textDark,ENT_QUOTES).";}\nhtml:not(.dark) body{color:var(--ui-text-light);}\nhtml.dark body{color:var(--ui-text-dark);}\nbody{font-family:var(--ui-body-font);font-size:var(--ui-body-size);font-weight:var(--ui-body-weight);}\nh1,h2,h3,h4,h5,h6{font-family:var(--ui-heading-font);font-weight:var(--ui-heading-weight);}\na{color:var(--ui-link-color);}\n.text-brand{color:var(--ui-brand-color)!important;}\n.bg-brand{background-color:var(--ui-brand-color)!important;}\n.hover\\:bg-brand:hover{background-color:var(--ui-brand-color)!important;}\ninput,textarea,select{color:inherit;}\nhtml.dark input,html.dark textarea,html.dark select{background-color:#0f172a;color:var(--ui-text-dark);}\n</style>\n";
+        $js = "<script>(function(){var t=localStorage.getItem('theme');document.documentElement.classList.toggle('dark', t==='dark');})();</script>\n";
+        echo $css.$js;
     }
 }

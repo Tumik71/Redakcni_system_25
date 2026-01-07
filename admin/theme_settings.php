@@ -15,11 +15,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $family = trim($_POST['ui_font_family'] ?? '');
     $size = trim($_POST['ui_font_size'] ?? '');
     $weight = trim($_POST['ui_font_weight'] ?? '');
-    if ($family === '' || $size === '' || $weight === '') { $error = 'Vyplňte rodinu písma, velikost a váhu.'; }
+    $hFamily = trim($_POST['ui_heading_font_family'] ?? '');
+    $hWeight = trim($_POST['ui_heading_weight'] ?? '');
+    $brand = trim($_POST['ui_brand_color'] ?? '');
+    $link = trim($_POST['ui_link_color'] ?? '');
+    if ($family === '' || $size === '' || $weight === '' || $hFamily === '' || $hWeight === '' || $brand === '' || $link === '') { $error = 'Vyplňte všechna pole.'; }
     else {
         Settings::set('ui_font_family', $family);
         Settings::set('ui_font_size', $size);
         Settings::set('ui_font_weight', $weight);
+        Settings::set('ui_heading_font_family', $hFamily);
+        Settings::set('ui_heading_weight', $hWeight);
+        Settings::set('ui_brand_color', $brand);
+        Settings::set('ui_link_color', $link);
         $msg = 'Uloženo.';
     }
 }
@@ -27,6 +35,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 $curFamily = Settings::get('ui_font_family', 'Inter');
 $curSize = Settings::get('ui_font_size', '16px');
 $curWeight = Settings::get('ui_font_weight', '300');
+$curHFamily = Settings::get('ui_heading_font_family', $curFamily);
+$curHWeight = Settings::get('ui_heading_weight', '600');
+$curBrand = Settings::get('ui_brand_color', '#0ea5e9');
+$curLink = Settings::get('ui_link_color', $curBrand);
 ?>
 <!doctype html>
 <html lang="cs">
@@ -49,20 +61,49 @@ $curWeight = Settings::get('ui_font_weight', '300');
   <div class="max-w-3xl mx-auto p-6 pt-20">
     <?php if ($msg): ?><div class="mb-3 p-3 bg-green-50 text-green-700 rounded"><?= htmlspecialchars($msg) ?></div><?php endif; ?>
     <?php if ($error): ?><div class="mb-3 p-3 bg-red-50 text-red-700 rounded"><?= htmlspecialchars($error) ?></div><?php endif; ?>
-    <form method="post" class="space-y-4 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-4 rounded">
-      <div>
-        <label class="block text-sm mb-1 text-gray-800 dark:text-slate-200">Rodina písma</label>
-        <input name="ui_font_family" class="w-full border border-slate-200 dark:border-slate-600 rounded p-2 bg-white dark:bg-slate-800 text-gray-900 dark:text-slate-100" value="<?= htmlspecialchars($curFamily) ?>" required>
-        <div class="text-xs text-gray-600 dark:text-slate-400 mt-1">Např. Inter, Roboto, Source Sans 3</div>
+    <form method="post" class="space-y-6 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-4 rounded">
+      <div class="space-y-3">
+        <div>
+          <div class="font-semibold mb-1">Text (články)</div>
+          <label class="block text-sm mb-1 text-gray-800 dark:text-slate-200">Rodina písma</label>
+          <input name="ui_font_family" class="w-full border border-slate-200 dark:border-slate-600 rounded p-2 bg-white dark:bg-slate-800 text-gray-900 dark:text-slate-100" value="<?= htmlspecialchars($curFamily) ?>" required>
+          <div class="text-xs text-gray-600 dark:text-slate-400 mt-1">Např. Inter, Roboto, Source Sans 3</div>
+        </div>
+        <div class="grid md:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-sm mb-1 text-gray-800 dark:text-slate-200">Velikost písma (px, rem)</label>
+            <input name="ui_font_size" class="w-full border border-slate-200 dark:border-slate-600 rounded p-2 bg-white dark:bg-slate-800 text-gray-900 dark:text-slate-100" value="<?= htmlspecialchars($curSize) ?>" required>
+          </div>
+          <div>
+            <label class="block text-sm mb-1 text-gray-800 dark:text-slate-200">Váha písma</label>
+            <input name="ui_font_weight" class="w-full border border-slate-200 dark:border-slate-600 rounded p-2 bg-white dark:bg-slate-800 text-gray-900 dark:text-slate-100" value="<?= htmlspecialchars($curWeight) ?>" required>
+            <div class="text-xs text-gray-600 dark:text-slate-400 mt-1">Např. 300 (light), 400 (normal)</div>
+          </div>
+        </div>
       </div>
-      <div>
-        <label class="block text-sm mb-1 text-gray-800 dark:text-slate-200">Velikost písma (px, rem)</label>
-        <input name="ui_font_size" class="w-full border border-slate-200 dark:border-slate-600 rounded p-2 bg-white dark:bg-slate-800 text-gray-900 dark:text-slate-100" value="<?= htmlspecialchars($curSize) ?>" required>
+      <div class="space-y-3">
+        <div>
+          <div class="font-semibold mb-1">Nadpisy</div>
+          <label class="block text-sm mb-1 text-gray-800 dark:text-slate-200">Rodina písma</label>
+          <input name="ui_heading_font_family" class="w-full border border-slate-200 dark:border-slate-600 rounded p-2 bg-white dark:bg-slate-800 text-gray-900 dark:text-slate-100" value="<?= htmlspecialchars($curHFamily) ?>" required>
+        </div>
+        <div>
+          <label class="block text-sm mb-1 text-gray-800 dark:text-slate-200">Váha nadpisů</label>
+          <input name="ui_heading_weight" class="w-full border border-slate-200 dark:border-slate-600 rounded p-2 bg-white dark:bg-slate-800 text-gray-900 dark:text-slate-100" value="<?= htmlspecialchars($curHWeight) ?>" required>
+        </div>
       </div>
-      <div>
-        <label class="block text-sm mb-1 text-gray-800 dark:text-slate-200">Váha písma</label>
-        <input name="ui_font_weight" class="w-full border border-slate-200 dark:border-slate-600 rounded p-2 bg-white dark:bg-slate-800 text-gray-900 dark:text-slate-100" value="<?= htmlspecialchars($curWeight) ?>" required>
-        <div class="text-xs text-gray-600 dark:text-slate-400 mt-1">Např. 300 (light), 400 (normal), 600 (semibold)</div>
+      <div class="space-y-3">
+        <div class="font-semibold">Barvy</div>
+        <div class="grid md:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-sm mb-1 text-gray-800 dark:text-slate-200">Brand barva (#hex)</label>
+            <input name="ui_brand_color" class="w-full border border-slate-200 dark:border-slate-600 rounded p-2 bg-white dark:bg-slate-800 text-gray-900 dark:text-slate-100" value="<?= htmlspecialchars($curBrand) ?>" required>
+          </div>
+          <div>
+            <label class="block text-sm mb-1 text-gray-800 dark:text-slate-200">Barva odkazů (#hex)</label>
+            <input name="ui_link_color" class="w-full border border-slate-200 dark:border-slate-600 rounded p-2 bg-white dark:bg-slate-800 text-gray-900 dark:text-slate-100" value="<?= htmlspecialchars($curLink) ?>" required>
+          </div>
+        </div>
       </div>
       <div class="flex gap-3">
         <button class="bg-brand text-white px-3 py-2 rounded">Uložit</button>

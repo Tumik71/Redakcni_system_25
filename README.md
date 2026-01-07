@@ -60,6 +60,18 @@ Správa uživatelů
   - `GET /forgot.php` — zadání uživatelského jména, vygeneruje se odkaz
   - `GET/POST /reset.php?token=...` — zadání nového hesla
 
+Registrace a aktivace
+- `GET/POST /register.php` — registrace nového uživatele (role `author`, stav `active=0`)
+- `GET /activate.php?token=...` — aktivace účtu přes e-mailový odkaz
+
+E-mail odesílání
+- Používá PHP `mail()` s hlavičkami HTML; nastavte v `.env`:
+  - `MAIL_FROM=noreply@tumik.cz`
+  - `MAIL_FROM_NAME=Tumik CMS`
+- ISPConfig + Postfix zajistí doručení; případné SPF/DKIM/DMARC nastavte v DNS.
+
 Migrace DB
 - Přidejte email a tabulku resetů:
   - přes phpMyAdmin nebo cli: importujte `db/migrations/001_add_email_and_password_resets.sql`
+- Aktivace účtů:
+  - importujte `db/migrations/002_user_activations.sql`

@@ -2,8 +2,9 @@
 require_once __DIR__ . '/../config/config.php';
 require_once __DIR__ . '/../src/Database.php';
 require_once __DIR__ . '/../src/PasswordReset.php';
+require_once __DIR__ . '/../src/Mail.php';
 
-use Tumik\CMS\PasswordReset; use Tumik\CMS\Database;
+use Tumik\CMS\PasswordReset; use Tumik\CMS\Database; use Tumik\CMS\Mail; use Tumik\CMS\Env;
 
 $pdo = Database::conn();
 $info = null; $error = null;
@@ -14,11 +15,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $u = $st->fetch();
     if ($u) {
         $token = PasswordReset::generate((int)$u['id']);
-        $link = '/reset.php?token=' . urlencode($token);
-        $info = 'Resetovací odkaz: ' . htmlspecialchars($link) . ' (v produkci zaslat e-mailem)';
-    } else {
-        $error = 'Uživatel nenalezen nebo blokován';
+        $link = rtrim(Env::get('APP_URL',''),'/') . '/reset.php?token=' . urlencode($token);
+        Mail::send($u['email'] ?? '', 'Obnovení hesla', '<p>Dobrý den,</p><p>klikněte na odkaz pro změnu hesla:</p><p><a href="'.$link.'">'.$link.'</a></p>');
     }
+    $info = 'Pokud účet existuje, byl odeslán e-mail s odkazem pro reset.';
 }
 ?>
 <!doctype html>

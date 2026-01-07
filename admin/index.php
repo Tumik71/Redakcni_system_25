@@ -34,6 +34,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <label class="block mb-2 text-sm">Heslo</label>
     <input type="password" name="password" class="w-full border rounded p-2 mb-4" required>
     <button class="w-full bg-blue-600 text-white py-2 rounded">Přihlásit</button>
+    <div class="mt-3 flex justify-between text-sm">
+      <a href="/forgot.php" class="text-blue-600">Zapomenuté heslo</a>
+      <a href="/register.php" class="text-blue-600">Registrace</a>
+    </div>
   </form>
 </body>
 </html>

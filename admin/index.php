@@ -50,10 +50,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <?php if ($error): ?>
       <div class="mb-3 p-3 bg-red-50 text-red-700 rounded"><?= htmlspecialchars($error) ?></div>
     <?php endif; ?>
-    <label class="block mb-2 text-sm">Uživatel</label>
-    <input name="username" class="w-full border border-slate-200 dark:border-slate-700 rounded p-2 mb-4 bg-white dark:bg-slate-900" required>
-    <label class="block mb-2 text-sm">Heslo</label>
-    <input type="password" name="password" class="w-full border border-slate-200 dark:border-slate-700 rounded p-2 mb-4 bg-white dark:bg-slate-900" required>
+    <label class="block mb-2 text-sm text-gray-800 dark:text-slate-200">Uživatel</label>
+    <input name="username" class="w-full border border-slate-200 dark:border-slate-600 rounded p-2 mb-4 bg-white dark:bg-slate-800 text-gray-900 dark:text-slate-100 placeholder-gray-400 dark:placeholder-slate-400" required>
+    <label class="block mb-2 text-sm text-gray-800 dark:text-slate-200">Heslo</label>
+    <input type="password" name="password" class="w-full border border-slate-200 dark:border-slate-600 rounded p-2 mb-4 bg-white dark:bg-slate-800 text-gray-900 dark:text-slate-100 placeholder-gray-400 dark:placeholder-slate-400" required>
     <button class="w-full bg-brand text-white py-2 rounded">Přihlásit</button>
     <div class="mt-3 flex justify-between text-sm">
       <a href="/forgot.php" class="text-brand">Zapomenuté heslo</a>

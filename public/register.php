@@ -61,16 +61,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <?php if ($ok): ?><div class="mb-3 p-3 bg-green-50 text-green-700 rounded"><?= htmlspecialchars($ok) ?></div><?php endif; ?>
     <form method="post" class="space-y-4 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-4 rounded">
       <div>
-        <label class="block text-sm mb-1">Uživatelské jméno</label>
-        <input name="username" class="w-full border border-slate-200 dark:border-slate-700 rounded p-2 bg-white dark:bg-slate-900" required>
+        <label class="block text-sm mb-1 text-gray-800 dark:text-slate-200">Uživatelské jméno</label>
+        <input name="username" class="w-full border border-slate-200 dark:border-slate-600 rounded p-2 bg-white dark:bg-slate-800 text-gray-900 dark:text-slate-100 placeholder-gray-400 dark:placeholder-slate-400" required>
       </div>
       <div>
-        <label class="block text-sm mb-1">Email</label>
-        <input type="email" name="email" class="w-full border border-slate-200 dark:border-slate-700 rounded p-2 bg-white dark:bg-slate-900" required>
+        <label class="block text-sm mb-1 text-gray-800 dark:text-slate-200">Email</label>
+        <input type="email" name="email" class="w-full border border-slate-200 dark:border-slate-600 rounded p-2 bg-white dark:bg-slate-800 text-gray-900 dark:text-slate-100 placeholder-gray-400 dark:placeholder-slate-400" required>
       </div>
       <div>
-        <label class="block text-sm mb-1">Heslo</label>
-        <input type="password" name="password" class="w-full border border-slate-200 dark:border-slate-700 rounded p-2 bg-white dark:bg-slate-900" required>
+        <label class="block text-sm mb-1 text-gray-800 dark:text-slate-200">Heslo</label>
+        <input type="password" name="password" class="w-full border border-slate-200 dark:border-slate-600 rounded p-2 bg-white dark:bg-slate-800 text-gray-900 dark:text-slate-100 placeholder-gray-400 dark:placeholder-slate-400" required>
       </div>
       <div class="flex gap-3">
         <button class="bg-brand hover:bg-brand/dark text-white px-3 py-2 rounded">Registrovat</button>
@@ -78,6 +78,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       </div>
     </form>
   </div>
-  <script>function syncIcons(){var d=document.documentElement.classList.contains('dark');var s=document.getElementById('iconSun');var m=document.getElementById('iconMoon');if(s&&m){s.classList.toggle('hidden', d);m.classList.toggle('hidden', !d);}}syncIcons();var b=document.getElementById('themeToggle');if(b){b.addEventListener('click',function(){var d=!document.documentElement.classList.contains('dark');document.documentElement.classList.toggle('dark', d);localStorage.setItem('theme',d?'dark':'light');syncIcons();});}}</script>
+  <script>function syncIcons(){var d=document.documentElement.classList.contains('dark');var s=document.getElementById('iconSun');var m=document.getElementById('iconMoon');if(s&&m){s.classList.toggle('hidden', d);m.classList.toggle('hidden', !d);}}syncIcons();var b=document.getElementById('themeToggle');if(b){b.addEventListener('click',function(){var d=!document.documentElement.classList.contains('dark');document.documentElement.classList.toggle('dark', d);localStorage.setItem('theme',d?'dark':'light');syncIcons();});}</script>
 </body>
 </html>

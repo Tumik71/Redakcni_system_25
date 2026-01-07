@@ -31,3 +31,23 @@ Nasazení na ISPConfig (tumik.cz)
   - Importujte `db/schema.sql` a `db/seed.sql` (volitelné) přes phpMyAdmin/CLI
 - Test:
   - Ověřte http(s) `https://tumik.cz/` a přihlášení v `https://tumik.cz/admin/`
+
+Role a oprávnění
+- Role: `admin` > `editor` > `author`
+- Přihlášenému uživateli se ukládá role do session; stránky pro správu obsahu vyžadují minimálně `editor`.
+- API pro zápis vyžaduje přihlášení a roli `editor`.
+
+API
+- Veřejné: `GET /api/posts.php`, `GET /api/post.php?slug=...`, `GET /api/pages.php`
+- Admin (zápis): `POST /admin/api/post_save.php`, `POST /admin/api/post_delete.php`, `POST /admin/api/page_save.php`, `POST /admin/api/page_delete.php`
+
+GitHub
+1) Vytvořte repo na GitHubu (prázdné).
+2) Nastavte remote:
+   - `powershell ./scripts/set-remote.ps1 -RepoUrl "https://github.com/<uzivatel>/<repo>.git"`
+3) Odeslání na GitHub:
+   - `powershell ./scripts/push.ps1`
+4) Další změny:
+   - `git add .`
+   - `git commit -m "Popis změny"`
+   - `git push`

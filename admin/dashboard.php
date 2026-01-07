@@ -8,10 +8,15 @@ use Tumik\CMS\Auth; use Tumik\CMS\Database;
 if (!Auth::check()) { header('Location: /admin/index.php'); exit; }
 $pdo = Database::conn();
 
-$counts = [];
-foreach (['users','posts','pages','media'] as $t) {
-    $counts[$t] = (int)$pdo->query("SELECT COUNT(*) FROM {$t}")->fetchColumn();
+function countTable($pdo, $table) {
+    return (int)$pdo->query("SELECT COUNT(*) FROM {$table}")->fetchColumn();
 }
+
+$counts = [
+    'users' => countTable($pdo, 'users'),
+    'posts' => countTable($pdo, 'posts'),
+    'pages' => countTable($pdo, 'pages'),
+];
 ?>
 <!doctype html>
 <html lang="cs">
@@ -26,13 +31,21 @@ foreach (['users','posts','pages','media'] as $t) {
     <div class="font-semibold">Administrace</div>
     <form action="/admin/logout.php" method="post"><button class="text-sm text-blue-600">Odhlásit</button></form>
   </header>
-  <main class="max-w-5xl mx-auto p-6 grid grid-cols-2 md:grid-cols-4 gap-4">
-    <?php foreach ($counts as $k=>$v): ?>
+  <main class="max-w-5xl mx-auto p-6 space-y-6">
+    <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+      <a href="/admin/posts.php" class="bg-white p-4 rounded border block">
+        <div class="text-sm text-gray-500">Články</div>
+        <div class="text-2xl font-bold"><?= $counts['posts'] ?></div>
+      </a>
+      <a href="/admin/pages.php" class="bg-white p-4 rounded border block">
+        <div class="text-sm text-gray-500">Stránky</div>
+        <div class="text-2xl font-bold"><?= $counts['pages'] ?></div>
+      </a>
       <div class="bg-white p-4 rounded border">
-        <div class="text-sm text-gray-500"><?= htmlspecialchars(strtoupper($k)) ?></div>
-        <div class="text-2xl font-bold"><?= $v ?></div>
+        <div class="text-sm text-gray-500">Uživatelé</div>
+        <div class="text-2xl font-bold"><?= $counts['users'] ?></div>
       </div>
-    <?php endforeach; ?>
+    </div>
   </main>
 </body>
 </html>

@@ -64,6 +64,50 @@ class Media {
         return ['filename'=>$filename,'path'=>$webPath,'mime'=>$mime,'size'=>$size];
     }
 
+    public static function saveUploadTo(array $file, string $subdir, bool $imagesOnly = false): array {
+        if (($file['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_OK) {
+            throw new \RuntimeException('upload_error');
+        }
+        $tmp = $file['tmp_name'];
+        $name = $file['name'] ?? 'file';
+        $finfo = finfo_open(FILEINFO_MIME_TYPE);
+        $mime = finfo_file($finfo, $tmp);
+        finfo_close($finfo);
+        if ($imagesOnly && !str_starts_with($mime, 'image/')) {
+            throw new \RuntimeException('mime_not_image');
+        }
+        $cfgAllowed = Settings::get('media_allowed_mime','image/jpeg,image/png,image/gif,image/webp,application/pdf');
+        $allowed = array_map('trim', explode(',', $cfgAllowed));
+        if (!in_array($mime, $allowed, true)) {
+            throw new \RuntimeException('mime_not_allowed');
+        }
+        $maxMb = (int)(Settings::get('media_max_upload_mb','10'));
+        $maxBytes = $maxMb > 0 ? $maxMb * 1024 * 1024 : 0;
+        if ($maxBytes && filesize($tmp) > $maxBytes) {
+            throw new \RuntimeException('file_too_large');
+        }
+        $ext = strtolower(pathinfo($name, PATHINFO_EXTENSION)) ?: self::extFromMime($mime);
+        $base = preg_replace('/[^a-zA-Z0-9_-]+/','-', pathinfo($name, PATHINFO_FILENAME));
+        $unique = date('YmdHis') . '-' . bin2hex(random_bytes(4));
+        $filename = ($base ?: 'file') . '-' . $unique . '.' . $ext;
+        $absBase = self::uploadAbsPath();
+        $abs = rtrim($absBase, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . trim($subdir, DIRECTORY_SEPARATOR);
+        if (!is_dir($abs)) { @mkdir($abs, 0755, true); }
+        $dest = $abs . DIRECTORY_SEPARATOR . $filename;
+        if (!move_uploaded_file($tmp, $dest)) {
+            throw new \RuntimeException('move_failed');
+        }
+        $size = filesize($dest) ?: 0;
+        if (str_starts_with($mime, 'image/')) {
+            // thumbs under uploads/thumbs/avatars
+            @mkdir(self::thumbDirAbs() . DIRECTORY_SEPARATOR . trim($subdir, DIRECTORY_SEPARATOR),0755,true);
+            self::makeThumb($dest, $mime, 160);
+        }
+        $webBase = rtrim(self::webBase(), '/') . '/' . trim($subdir, '/');
+        $webPath = rtrim($webBase, '/') . '/' . $filename;
+        return ['filename'=>$filename,'path'=>$webPath,'mime'=>$mime,'size'=>$size];
+    }
+
     private static function extFromMime(string $mime): string {
         return match($mime){
             'image/jpeg' => 'jpg',

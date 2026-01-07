@@ -99,6 +99,9 @@ if ($step === 6 && $_SERVER['REQUEST_METHOD'] === 'POST'){
         if (is_file(__DIR__.'/../db/migrations/003_settings.sql')) {
             runSqlFile(__DIR__.'/../db/migrations/003_settings.sql', $pdo);
         }
+        if (is_file(__DIR__.'/../db/migrations/004_add_user_avatar.sql')) {
+            runSqlFile(__DIR__.'/../db/migrations/004_add_user_avatar.sql', $pdo);
+        }
         if ($demo && is_file(__DIR__.'/../db/seed.sql')) {
             runSqlFile(__DIR__.'/../db/seed.sql', $pdo);
         }

@@ -43,11 +43,18 @@ $rows = $pdo->query('SELECT id, username, email, role, active, created_at FROM u
     </div>
     <table class="w-full bg-white dark:bg-slate-800 rounded border border-slate-200 dark:border-slate-700">
       <thead><tr class="text-left">
-        <th class="p-3">Uživatel</th><th class="p-3">Email</th><th class="p-3">Role</th><th class="p-3">Stav</th><th class="p-3">Akce</th>
+        <th class="p-3">Avatar</th><th class="p-3">Uživatel</th><th class="p-3">Email</th><th class="p-3">Role</th><th class="p-3">Stav</th><th class="p-3">Akce</th>
       </tr></thead>
       <tbody>
         <?php foreach ($rows as $r): ?>
           <tr class="border-t border-slate-200 dark:border-slate-700">
+            <td class="p-3">
+              <?php if (!empty($r['avatar'])): ?>
+                <img src="<?= htmlspecialchars($r['avatar']) ?>" alt="" class="h-10 w-10 rounded-full object-cover border border-slate-200 dark:border-slate-700">
+              <?php else: ?>
+                <div class="h-10 w-10 rounded-full bg-slate-300 dark:bg-slate-700"></div>
+              <?php endif; ?>
+            </td>
             <td class="p-3 font-medium"><?= htmlspecialchars($r['username']) ?></td>
             <td class="p-3 text-gray-600 dark:text-slate-300"><?= htmlspecialchars($r['email'] ?? '') ?></td>
             <td class="p-3"><?= htmlspecialchars($r['role']) ?></td>

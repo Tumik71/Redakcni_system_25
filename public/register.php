@@ -74,7 +74,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       </div>
       <div class="flex gap-3">
         <button class="bg-brand hover:bg-brand/dark text-white px-3 py-2 rounded">Registrovat</button>
-        <a href="/admin/" class="px-3 py-2 rounded border">Přihlásit se</a>
+        <a href="/admin/" class="px-3 py-2 rounded border text-gray-800 dark:text-slate-100 border-slate-300 dark:border-slate-500 hover:bg-gray-50 dark:hover:bg-slate-700">Přihlásit se</a>
       </div>
     </form>
   </div>

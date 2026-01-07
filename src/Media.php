@@ -36,9 +36,15 @@ class Media {
         $finfo = finfo_open(FILEINFO_MIME_TYPE);
         $mime = finfo_file($finfo, $tmp);
         finfo_close($finfo);
-        $allowed = ['image/jpeg','image/png','image/gif','image/webp','application/pdf'];
+        $cfgAllowed = Settings::get('media_allowed_mime','image/jpeg,image/png,image/gif,image/webp,application/pdf');
+        $allowed = array_map('trim', explode(',', $cfgAllowed));
         if (!in_array($mime, $allowed, true)) {
             throw new \RuntimeException('mime_not_allowed');
+        }
+        $maxMb = (int)(Settings::get('media_max_upload_mb','10'));
+        $maxBytes = $maxMb > 0 ? $maxMb * 1024 * 1024 : 0;
+        if ($maxBytes && filesize($tmp) > $maxBytes) {
+            throw new \RuntimeException('file_too_large');
         }
         $ext = strtolower(pathinfo($name, PATHINFO_EXTENSION)) ?: self::extFromMime($mime);
         $base = preg_replace('/[^a-zA-Z0-9_-]+/','-', pathinfo($name, PATHINFO_FILENAME));

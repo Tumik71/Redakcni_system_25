@@ -22,7 +22,12 @@ $rows = $pdo->query('SELECT id, filename, path, mime, size, created_at FROM medi
   <div class="max-w-6xl mx-auto p-6">
     <div class="flex justify-between mb-4">
       <h1 class="text-xl font-semibold">Média</h1>
-      <a href="/admin/media_upload.php" class="bg-blue-600 text-white px-3 py-2 rounded">Nahrát soubor</a>
+      <div class="space-x-2">
+        <a href="/admin/media_upload.php" class="bg-blue-600 text-white px-3 py-2 rounded">Nahrát soubor</a>
+        <?php if (Tumik\CMS\Auth::hasRole('admin')): ?>
+        <a href="/admin/media_settings.php" class="bg-gray-700 text-white px-3 py-2 rounded">Nastavení</a>
+        <?php endif; ?>
+      </div>
     </div>
     <table class="w-full bg-white rounded border">
       <thead><tr class="text-left">

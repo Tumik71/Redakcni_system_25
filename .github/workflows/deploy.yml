@@ -1,0 +1,60 @@
+name: Deploy to Tumik Server
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-tumik
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup SSH agent
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_KEY }}
+
+      - name: Add known host
+        env:
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_PORT: ${{ secrets.SSH_PORT }}
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -p "$SSH_PORT" "$SSH_HOST" >> ~/.ssh/known_hosts
+
+      - name: Deploy via rsync (exclude sensitive files)
+        env:
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_PORT: ${{ secrets.SSH_PORT }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+          DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
+        run: |
+          rsync -az --delete \
+            --exclude '.git/' \
+            --exclude '.github/' \
+            --exclude '.trae/' \
+            --exclude 'node_modules/' \
+            --exclude 'vendor/' \
+            --exclude 'db/' \
+            --exclude '*.sql' \
+            --exclude '.env*' \
+            --exclude 'README.md' \
+            --exclude 'scripts/' \
+            -e "ssh -p $SSH_PORT" ./ "$SSH_USER@$SSH_HOST:$DEPLOY_PATH"
+
+      - name: Post-deploy permissions (optional)
+        if: ${{ success() }}
+        env:
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_PORT: ${{ secrets.SSH_PORT }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+          DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
+        run: |
+          ssh -p "$SSH_PORT" "$SSH_USER@$SSH_HOST" "find '$DEPLOY_PATH' -type f -name '*.php' -exec chmod 644 {} \; ; find '$DEPLOY_PATH' -type d -exec chmod 755 {} \;"

@@ -57,6 +57,17 @@ Automatické odesílání na GitHub
   - `powershell -ExecutionPolicy Bypass -File ./scripts/auto-push.ps1`
 - Debounce je 5s; ignoruje `.git`, `node_modules`, `vendor`, `.env` je ignorován díky `.gitignore`.
 
+CI/CD – GitHub Actions (deploy na server)
+- Workflow: `.github/workflows/deploy.yml` – spouští se na `push` do `main` nebo ručně.
+- Nastav na GitHubu v repo Secrets → Actions tyto položky:
+  - `SSH_HOST` = `server.tumik.cz`
+  - `SSH_PORT` = `22`
+  - `SSH_USER` = uživatel webu (např. `web5`)
+  - `SSH_KEY` = privátní SSH klíč (PEM) s veřejnou částí přidanou na server (`~/.ssh/authorized_keys`)
+  - `DEPLOY_PATH` = `/var/www/clients/client1/web5/web`
+- Co se nasazuje: celý projekt s výjimkou `.env*`, `db/`, `.git/`, `.github/`, `scripts/`, `vendor/`, `node_modules/`, `README.md`.
+- Práva po deploy: volitelný krok nastaví `644` pro soubory a `755` pro složky.
+
 Správa uživatelů
 - Administrace: `admin/users.php` (list, vytvoření, editace, smazání, reset hesla)
 - Role vyžadované: minimálně `admin` pro správu uživatelů

@@ -83,7 +83,8 @@ Správa médií
 - Cesty v DB (`media.path`) jsou webové cesty, např. `/uploads/20260107-xxxx.jpg`.
 - Náhledy: pro obrázky se generují miniatury v `uploads/thumbs/` a používají se v administraci.
 - Vložení do editoru: v editaci článku/stránky je panel „Vložit médium“, který vkládá `<img>` nebo odkaz do obsahu.
- - Nastavení omezení: `admin/media_settings.php` umožní měnit povolené MIME typy a maximální velikost souborů (MB). Výchozí hodnoty se vytvoří migrací `003_settings.sql`.
+- Nastavení omezení: `admin/media_settings.php` umožní měnit povolené MIME typy a maximální velikost souborů (MB). Výchozí hodnoty se vytvoří migrací `003_settings.sql`.
+ - Nahrávání má klientskou validaci typu/velikosti a ukazatel průběhu (XHR) v `admin/media_upload.php`.
 
 Správa uživatelů
 - Administrace: `admin/users.php` (list, vytvoření, editace, smazání, reset hesla)

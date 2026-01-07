@@ -68,6 +68,10 @@ CI/CD – GitHub Actions (deploy na server)
 - Co se nasazuje: celý projekt s výjimkou `.env*`, `db/`, `.git/`, `.github/`, `scripts/`, `vendor/`, `node_modules/`, `README.md`.
 - Práva po deploy: volitelný krok nastaví `644` pro soubory a `755` pro složky.
 
+Instalátor
+- Spusťte `https://tumik.cz/install/` a projděte kroky: kontrola prostředí → zadání DB a URL → nastavení admina → vytvoření `.env`, schématu a migrací.
+- Pokud `.env` chybí nebo DB není dostupná, systém automaticky přesměruje do instalátoru.
+
 Správa uživatelů
 - Administrace: `admin/users.php` (list, vytvoření, editace, smazání, reset hesla)
 - Role vyžadované: minimálně `admin` pro správu uživatelů

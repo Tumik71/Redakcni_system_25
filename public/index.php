@@ -1,8 +1,11 @@
 <?php
 require_once __DIR__ . '/../config/config.php';
 require_once __DIR__ . '/../src/Database.php';
+require_once __DIR__ . '/../src/Installer.php';
 
-use Tumik\CMS\Database;
+use Tumik\CMS\Database; use Tumik\CMS\Installer;
+
+if (!Installer::isInstalled()) { header('Location: /install/?step=1'); exit; }
 
 $pdo = Database::conn();
 $stmt = $pdo->query('SELECT id, title, slug, created_at FROM posts WHERE published = 1 ORDER BY created_at DESC LIMIT 10');

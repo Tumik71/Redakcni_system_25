@@ -2,8 +2,11 @@
 require_once __DIR__ . '/../config/config.php';
 require_once __DIR__ . '/../src/Database.php';
 require_once __DIR__ . '/../src/Auth.php';
+require_once __DIR__ . '/../src/Installer.php';
 
-use Tumik\CMS\Auth;
+use Tumik\CMS\Auth; use Tumik\CMS\Installer;
+
+if (!Installer::isInstalled()) { header('Location: /install/?step=1'); exit; }
 
 if (Auth::check()) { header('Location: /admin/dashboard.php'); exit; }
 

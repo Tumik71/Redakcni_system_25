@@ -20,7 +20,15 @@ function writeEnv($pairs){
 function runSqlFile($path, $pdo){
     $sql = file_get_contents($path);
     foreach (array_filter(array_map('trim', explode(';', $sql))) as $stmt){
-        if ($stmt) { $pdo->exec($stmt); }
+        if (!$stmt) { continue; }
+        try {
+            $pdo->exec($stmt);
+        } catch (\PDOException $e) {
+            if ($e->getCode() === '23000' && strpos($e->getMessage(), 'Duplicate entry') !== false) {
+                continue;
+            }
+            throw $e;
+        }
     }
 }
 
@@ -96,9 +104,9 @@ if ($step === 6 && $_SERVER['REQUEST_METHOD'] === 'POST'){
         }
         ensureUploads($pairs['UPLOAD_DIR']);
         writeHtaccess(__DIR__.'/../public');
-        $hash = password_hash($pairs['ADMIN_DEFAULT_PASS'], PASSWORD_DEFAULT);
-        $stmt = $pdo->prepare('INSERT INTO users (username,email,role,active,password_hash) VALUES (?,?,?,?,?)');
-        $stmt->execute([$pairs['ADMIN_DEFAULT_USER'],$adminEmail,'admin',1,$hash]);
+    $hash = password_hash($pairs['ADMIN_DEFAULT_PASS'], PASSWORD_DEFAULT);
+    $stmt = $pdo->prepare('INSERT INTO users (username,email,role,active,password_hash) VALUES (?,?,?,?,?) ON DUPLICATE KEY UPDATE email=VALUES(email), role=VALUES(role), active=VALUES(active), password_hash=VALUES(password_hash)');
+    $stmt->execute([$pairs['ADMIN_DEFAULT_USER'],$adminEmail,'admin',1,$hash]);
         $_SESSION['install_done'] = true;
         header('Location: ?step=7'); exit;
     } catch (\Throwable $e) {
